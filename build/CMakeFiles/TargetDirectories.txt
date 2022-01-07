@@ -1,3 +1,0 @@
-/home/eons/git/bin_cpp_api_test/build/CMakeFiles/edit_cache.dir
-/home/eons/git/bin_cpp_api_test/build/CMakeFiles/rebuild_cache.dir
-/home/eons/git/bin_cpp_api_test/build/CMakeFiles/entrypoint.dir
