@@ -56,17 +56,6 @@ CMAKE_BINARY_DIR = /home/eons/git/bin_cpp_api_test/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -77,6 +66,17 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named cpp_api_test
+# Target rules for targets named entrypoint
 
 # Build rule for target.
-cpp_api_test: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 cpp_api_test
-.PHONY : cpp_api_test
+entrypoint: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 entrypoint
+.PHONY : entrypoint
 
 # fast build rule for target.
-cpp_api_test/fast:
-	$(MAKE) -f CMakeFiles/cpp_api_test.dir/build.make CMakeFiles/cpp_api_test.dir/build
-.PHONY : cpp_api_test/fast
+entrypoint/fast:
+	$(MAKE) -f CMakeFiles/entrypoint.dir/build.make CMakeFiles/entrypoint.dir/build
+.PHONY : entrypoint/fast
 
 home/eons/git/bin_cpp_api_test/src/main.o: home/eons/git/bin_cpp_api_test/src/main.cpp.o
 
@@ -129,7 +129,7 @@ home/eons/git/bin_cpp_api_test/src/main.o: home/eons/git/bin_cpp_api_test/src/ma
 
 # target to build an object file
 home/eons/git/bin_cpp_api_test/src/main.cpp.o:
-	$(MAKE) -f CMakeFiles/cpp_api_test.dir/build.make CMakeFiles/cpp_api_test.dir/home/eons/git/bin_cpp_api_test/src/main.cpp.o
+	$(MAKE) -f CMakeFiles/entrypoint.dir/build.make CMakeFiles/entrypoint.dir/home/eons/git/bin_cpp_api_test/src/main.cpp.o
 .PHONY : home/eons/git/bin_cpp_api_test/src/main.cpp.o
 
 home/eons/git/bin_cpp_api_test/src/main.i: home/eons/git/bin_cpp_api_test/src/main.cpp.i
@@ -138,7 +138,7 @@ home/eons/git/bin_cpp_api_test/src/main.i: home/eons/git/bin_cpp_api_test/src/ma
 
 # target to preprocess a source file
 home/eons/git/bin_cpp_api_test/src/main.cpp.i:
-	$(MAKE) -f CMakeFiles/cpp_api_test.dir/build.make CMakeFiles/cpp_api_test.dir/home/eons/git/bin_cpp_api_test/src/main.cpp.i
+	$(MAKE) -f CMakeFiles/entrypoint.dir/build.make CMakeFiles/entrypoint.dir/home/eons/git/bin_cpp_api_test/src/main.cpp.i
 .PHONY : home/eons/git/bin_cpp_api_test/src/main.cpp.i
 
 home/eons/git/bin_cpp_api_test/src/main.s: home/eons/git/bin_cpp_api_test/src/main.cpp.s
@@ -147,7 +147,7 @@ home/eons/git/bin_cpp_api_test/src/main.s: home/eons/git/bin_cpp_api_test/src/ma
 
 # target to generate assembly for a file
 home/eons/git/bin_cpp_api_test/src/main.cpp.s:
-	$(MAKE) -f CMakeFiles/cpp_api_test.dir/build.make CMakeFiles/cpp_api_test.dir/home/eons/git/bin_cpp_api_test/src/main.cpp.s
+	$(MAKE) -f CMakeFiles/entrypoint.dir/build.make CMakeFiles/entrypoint.dir/home/eons/git/bin_cpp_api_test/src/main.cpp.s
 .PHONY : home/eons/git/bin_cpp_api_test/src/main.cpp.s
 
 # Help Target
@@ -156,9 +156,9 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... cpp_api_test"
+	@echo "... rebuild_cache"
+	@echo "... entrypoint"
 	@echo "... home/eons/git/bin_cpp_api_test/src/main.o"
 	@echo "... home/eons/git/bin_cpp_api_test/src/main.i"
 	@echo "... home/eons/git/bin_cpp_api_test/src/main.s"

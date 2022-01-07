@@ -1,6 +1,6 @@
 FROM restbed:ubuntu
 
-COPY /src/example /entrypoint
+COPY /build/out/entrypoint /entrypoint
 RUN chmod +x /entrypoint
 
 EXPOSE 1984
