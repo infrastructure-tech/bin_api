@@ -2,10 +2,12 @@
 #include <cstdlib>
 #include <restbed>
 #include <cpr/cpr.h>
+#include <nlohmann/json.hpp>
 #include "base64.h"
 
 using namespace std;
 using namespace restbed;
+using json = nlohmann::json;
 
 struct Auth
 {
@@ -72,6 +74,10 @@ void download_package( const shared_ptr< Session > session )
     }
 
     fprintf( stdout, "got %ld: %s\n", serverResponse.status_code, serverResponse.text.c_str());
+
+    json responseData = json::parse(serverResponse.text);
+    fprintf( stdout, "json: %s\n", responseData.dump().c_str());
+    fprintf( stdout, "file: %s\n", responseData[0]["file"].get<string>().c_str());
 
     session->close( OK, "download package...");
 }
