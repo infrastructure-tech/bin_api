@@ -48,7 +48,7 @@ void publish_package(const shared_ptr< Session > session )
     const auto request = session->get_request();
     int contentLength = request->get_header("Content-Length", 0);
 
-    session->fetch(contentLength, [ request, contentLength ](const shared_ptr< Session > session, const Bytes & body )
+    session->fetch(contentLength, [ request, contentLength ](const shared_ptr< Session > l_session, const Bytes & l_body )
     {
 #if 0
         string parameters;
@@ -56,22 +56,36 @@ void publish_package(const shared_ptr< Session > session )
         {
             parameters += "{"+param.first+" : "+param.second+"} ";
         }
-        fprintf(stdout, "Publishing package with parameters: {\n    %s\n}\nand body (%d): {\n    %.*s\n}\n", parameters.c_str(), contentLength, (int) body.size(), body.data());
+        fprintf(stdout, "Publishing package with parameters: {\n    %s\n}\nand l_body (%d): {\n    %.*s\n}\n", parameters.c_str(), contentLength, (int) l_body.size(), l_body.data());
 #endif
 
         if (!request->has_header("Authorization"))
         {
-            session->close(401, "Publishing requires http basic auth with username and password.");
+            l_session->close(401, "Publishing requires http basic auth with username and password.");
+            l_session->erase();
             return;
         }
-        Auth auth = GetAuth(session);
+        Auth auth = GetAuth(l_session);
         if (auth.username.empty() || auth.password.empty())
         {
-            session->close(401, "Publishing requires http basic auth with username and password.");
+            l_session->close(401, "Publishing requires http basic auth with username and password.");
+            l_session->erase();
             return;
         }
-
-        json requestData = json::parse(body.data());
+        //TODO: why is this requestJson string nonsense required in order to trim invalid bytes from the end of the 2nd and onward calls of json::parse()???
+        char* requestJson = new char[l_body.size()];
+        sprintf(requestJson, "%.*s", (int) l_body.size(), l_body.data());
+        string jStr(requestJson); //= R"({"package_name": "bin_cpp_api_test", "version": "v0.0.3", "visibility": "private", "package": ""})"; // <-  static string works 100%.
+//        json requestData = json::parse(l_body.data(), nullptr, false); //parsing bytes only works the 1st time; even though the prints are valid.
+        json requestData = json::parse(jStr, nullptr, false);
+        if (requestData.is_discarded())
+        {
+            fprintf(stdout, "Could not parse:\n%.*s\n", (int) l_body.size(), l_body.data());
+            l_session->close(400, "Could not parse request. Please submit request as valid json.");
+            l_session->erase();
+            return;
+        }
+        delete[] requestJson;
 
         const vector<RequiredParameter> requiredParameters = {
                 {"input_1", "package_name", {}, ""},
@@ -89,7 +103,8 @@ void publish_package(const shared_ptr< Session > session )
             {
                 if(req.defaultVal.empty())
                 {
-                    session->close(400, "Please specify \""+req.name+"\"");
+                    l_session->close(400, "Please specify \"" + req.name + "\"");
+                    l_session->erase();
                     return;
                 }
                 if (req.defaultVal == "EMPTY")
@@ -110,10 +125,7 @@ void publish_package(const shared_ptr< Session > session )
         if (upstreamRequestBody["input_4"] == "public")
             upstreamRequestBody["input_4"] = "publish"; //what upstream expects.
 
-//        string decodedPackage;
-//        macaron::Base64::Decode(upstreamRequestBody["input_3"].get<string>(), decodedPackage);
-        upstreamRequestBody["input_3"] = "";
-        fprintf(stdout, "Request body:\n%s\n", upstreamRequestBody.dump().c_str());
+//        fprintf(stdout, "Request l_body:\n%s\n", upstreamRequestBody.dump().c_str());
 
         cpr::Response upstreamResponse = cpr::Post(
                 cpr::Url("https://infrastructure.tech/wp-json/gf/v2/forms/1/submissions"),
@@ -128,24 +140,43 @@ void publish_package(const shared_ptr< Session > session )
 //            fprintf(stdout, "Response header: {%s : %s}\n", head.first.c_str(), head.second.c_str());
 //        }
 
-        const multimap< string, string > replyHeaders
-        {
-            { "Content-Type", "application/json" }
-        };
+//        const multimap< string, string > replyHeaders
+//        {
+//            { "Content-Type", "application/json" }
+//        };
 
         fprintf(stdout, "Got %ld:\n%s\n", upstreamResponse.status_code, upstreamResponse.text.c_str());
-        session->close(upstreamResponse.status_code, upstreamResponse.text, replyHeaders);
+//        l_session->close(upstreamResponse.status_code, upstreamResponse.text, replyHeaders); //<- we don't want to be sending raw responses back to the requester.
+        if (upstreamResponse.status_code == 400 && upstreamResponse.text.find("You do not have access to update this package.") != std::string::npos)
+        {
+            l_session->close(401, "Unauthorized.");
+            l_session->erase();
+            return;
+        }
+        l_session->close(upstreamResponse.status_code, "complete.");
+        l_session->erase();
     });
 }
 
 void download_package(const shared_ptr< Session > session )
 {
-    Auth auth = GetAuth(session);
     auto request = session->get_request();
+
+#if 1
+    string parameters;
+    for (const auto& param : request->get_query_parameters())
+    {
+        parameters += "{"+param.first+" : "+param.second+"} ";
+    }
+    fprintf(stdout, "Getting package with parameters: {\n    %s\n}\n", parameters.c_str());
+#endif
+
+    Auth auth = GetAuth(session);
     if (!request->has_query_parameter("package_name"))
     {
         session->close(400, "You must specify the \"package_name\" that you would like to download." );
     }
+
     string packageName = request->get_query_parameter("package_name");
     string public_url = "https://infrastructure.tech/wp-json/wp/v2/package?slug=" + packageName;
     string private_url = public_url + "&status=private";
