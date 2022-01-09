@@ -86,14 +86,14 @@ void publish_package(const shared_ptr< Session > session )
             return;
         }
         delete[] requestJson;
-
+        //{(ignore this bit), "parameter name", {possible choices}, "default value"}
         const vector<RequiredParameter> requiredParameters = {
-                {"input_1", "package_name", {}, ""},
-                {"input_2", "version", {}, ""},
-                {"input_3", "package", {}, ""},
-                {"input_4", "visibility", {"public", "private"}, "private"},
-                {"input_5", "package_type", {}, "EMPTY"},
-                {"input_6", "description", {}, "EMPTY"}
+                {"input_1", "package_name", {}, ""}, //the name of the package
+                {"input_2", "version", {}, ""}, //the version of the package
+                {"input_3", "package", {}, ""}, //the package data, base64 encoded.
+                {"input_4", "visibility", {"public", "private"}, "private"}, //"private" if the package requires authentication to view; "public" if it does not.
+                {"input_5", "package_type", {}, "EMPTY"}, //metadata. use as thou wilt.
+                {"input_6", "description", {}, "EMPTY"} //docs maybe?
         };
 
         json upstreamRequestBody;
@@ -195,11 +195,18 @@ void download_package(const shared_ptr< Session > session )
     }
 
     fprintf(stdout, "got %ld: %s\n", upstreamResponse.status_code, upstreamResponse.text.c_str());
+    if (upstreamResponse.status_code == 401)
+    {
+        session->close(401, "Unauthorized. Wrong password?");
+        session->erase();
+        return;
+    }
 
     json responseData = json::parse(upstreamResponse.text);
-    if (responseData.size() != 1)
+    if (responseData.size() != 1 || !responseData[0].contains("file"))
     {
         session->close(404, "Package " + packageName + " could not be found.");
+        session->erase();
         return;
     }
     string fileUrl = responseData[0]["file"].get<string>();
@@ -214,6 +221,7 @@ void download_package(const shared_ptr< Session > session )
     };
 
     session->close(OK, fileData.text, replyHeaders);
+    session->erase();
 }
 
 int main(const int, const char** )
