@@ -20,7 +20,7 @@
         "os" : "debian",
         "entrypoint" : "/usr/local/bin/entrypoint",
         "also" : [
-          "EXPOSE 1984"
+          "EXPOSE 80"
         ]
       }
     }
