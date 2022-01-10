@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/eons-dev/part_server-workflows.git
+	branch = main
+	commit = 16fafce51d903a9fa1cca3dcd44fa6606181a616
+	parent = f6c7a01134d0be8d4cdb90d1c54927252f5d4d14
+	method = merge
+	cmdver = 0.4.3
