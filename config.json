@@ -12,7 +12,7 @@
       "name" : "infrastructure",
       "buildPath" : "tmp",
       "copy" : [
-        {"entrypoint" : "src/"}
+        {"out/" : "src/"}
       ],
       "config" : {
         "name" : "eons/srv_infrastructure",

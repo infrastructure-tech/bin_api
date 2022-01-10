@@ -27,7 +27,7 @@ struct RequiredParameter
 Auth GetAuth(const shared_ptr< Session > session)
 {
     Auth ret;
-    string authorization = session->get_request()->get_header("Authorization" );
+    string authorization = session->get_request()->get_header("Authorization");
     size_t breakPos = authorization.find(' ');
     ret.type = authorization.substr(0, breakPos);
     if (ret.type != "Basic")
@@ -43,12 +43,12 @@ Auth GetAuth(const shared_ptr< Session > session)
     return ret;
 }
 
-void publish_package(const shared_ptr< Session > session )
+void publish_package(const shared_ptr< Session > session)
 {
     const auto request = session->get_request();
     int contentLength = request->get_header("Content-Length", 0);
 
-    session->fetch(contentLength, [ request, contentLength ](const shared_ptr< Session > l_session, const Bytes & l_body )
+    session->fetch(contentLength, [ request, contentLength ](const shared_ptr< Session > l_session, const Bytes & l_body)
     {
 #if 0
         string parameters;
@@ -158,7 +158,7 @@ void publish_package(const shared_ptr< Session > session )
     });
 }
 
-void download_package(const shared_ptr< Session > session )
+void download_package(const shared_ptr< Session > session)
 {
     auto request = session->get_request();
 
@@ -174,7 +174,7 @@ void download_package(const shared_ptr< Session > session )
     Auth auth = GetAuth(session);
     if (!request->has_query_parameter("package_name"))
     {
-        session->close(400, "You must specify the \"package_name\" that you would like to download." );
+        session->close(400, "You must specify the \"package_name\" that you would like to download.");
     }
 
     string packageName = request->get_query_parameter("package_name");
@@ -224,24 +224,24 @@ void download_package(const shared_ptr< Session > session )
     session->erase();
 }
 
-int main(const int, const char** )
+int main(const int, const char**)
 {
     auto publish = make_shared< Resource >();
-    publish->set_path("v1/package/publish" );
-    publish->set_method_handler("POST", publish_package );
+    publish->set_path("v1/package/publish");
+    publish->set_method_handler("POST", publish_package);
 
     auto download = make_shared< Resource >();
-    download->set_path("v1/package/download" );
-    download->set_method_handler("GET", download_package );
+    download->set_path("v1/package/download");
+    download->set_method_handler("GET", download_package);
 
     auto settings = make_shared< Settings >();
-    settings->set_port(1984 );
-    settings->set_default_header("Connection", "close" );
+    settings->set_port(80);
+    settings->set_default_header("Connection", "close");
 
     Service service;
-    service.publish(publish );
-    service.publish(download );
-    service.start(settings );
+    service.publish(publish);
+    service.publish(download);
+    service.start(settings);
 
     return EXIT_SUCCESS;
 }
