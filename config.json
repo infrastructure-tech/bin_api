@@ -4,5 +4,25 @@
   "libs_shared": [
     "restbed",
     "cpr"
+  ],
+  "ebbs_next": [
+    {
+      "language": "docker",
+      "type" : "srv",
+      "name" : "infrastructure",
+      "buildPath" : "tmp",
+      "copy" : [
+        {"entrypoint" : "src/"}
+      ],
+      "config" : {
+        "name" : "eons/srv_infrastructure",
+        "from" : "eons/img_webserver",
+        "os" : "debian",
+        "entrypoint" : "/usr/local/bin/entrypoint",
+        "also" : [
+          "EXPOSE 1984"
+        ]
+      }
+    }
   ]
 }
