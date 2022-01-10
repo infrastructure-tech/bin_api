@@ -128,7 +128,7 @@ void publish_package(const shared_ptr< Session > session)
 //        fprintf(stdout, "Request l_body:\n%s\n", upstreamRequestBody.dump().c_str());
 
         cpr::Response upstreamResponse = cpr::Post(
-                cpr::Url("https://infrastructure.tech/wp-json/gf/v2/forms/1/submissions"),
+                cpr::Url("http://infrastructure.tech/wp-json/gf/v2/forms/1/submissions"),
                 cpr::Body(upstreamRequestBody.dump()),
                 cpr::Authentication{auth.username, auth.password},
                 cpr::Header{{"Content-Type", "application/json"}});
@@ -178,7 +178,7 @@ void download_package(const shared_ptr< Session > session)
     }
 
     string packageName = request->get_query_parameter("package_name");
-    string public_url = "https://infrastructure.tech/wp-json/wp/v2/package?slug=" + packageName;
+    string public_url = "http://infrastructure.tech/wp-json/wp/v2/package?slug=" + packageName;
     string private_url = public_url + "&status=private";
     cpr::Response upstreamResponse;
     if (request->has_header("Authorization"))
