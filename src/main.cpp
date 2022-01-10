@@ -24,6 +24,32 @@ struct RequiredParameter
     string defaultVal;
 };
 
+class Environment
+{
+public:
+    static Environment& Instance()
+    {
+        static Environment environment;
+        return environment;
+    }
+    string GetUpstreamURL() const {
+        return m_upstreamReplacement;
+    }
+    string MangleURL(string url)
+    {
+        //assume input is good.
+        return GetUpstreamURL() + url.substr(m_upstreamUrl.size());
+    }
+private:
+    Environment() :
+        m_upstreamUrl("https://infrastructure.tech"),
+        m_upstreamReplacement(getenv("INFRASTRUCTURE_URL"))
+    {
+    }
+    const string m_upstreamUrl;
+    const string m_upstreamReplacement;
+};
+
 Auth GetAuth(const shared_ptr< Session > session)
 {
     Auth ret;
@@ -128,7 +154,7 @@ void publish_package(const shared_ptr< Session > session)
 //        fprintf(stdout, "Request l_body:\n%s\n", upstreamRequestBody.dump().c_str());
 
         cpr::Response upstreamResponse = cpr::Post(
-                cpr::Url("http://infrastructure.tech/wp-json/gf/v2/forms/1/submissions"),
+                cpr::Url(Environment::Instance().GetUpstreamURL() + "/wp-json/gf/v2/forms/1/submissions"),
                 cpr::Body(upstreamRequestBody.dump()),
                 cpr::Authentication{auth.username, auth.password},
                 cpr::Header{{"Content-Type", "application/json"}});
@@ -178,7 +204,7 @@ void download_package(const shared_ptr< Session > session)
     }
 
     string packageName = request->get_query_parameter("package_name");
-    string public_url = "http://infrastructure.tech/wp-json/wp/v2/package?slug=" + packageName;
+    string public_url = Environment::Instance().GetUpstreamURL() + "/wp-json/wp/v2/package?slug=" + packageName;
     string private_url = public_url + "&status=private";
     cpr::Response upstreamResponse;
     if (request->has_header("Authorization"))
@@ -210,9 +236,17 @@ void download_package(const shared_ptr< Session > session)
         return;
     }
     string fileUrl = responseData[0]["file"].get<string>();
-    fprintf(stdout, "json: %s\n", responseData.dump().c_str());
-    fprintf(stdout, "file: %s\n", fileUrl.c_str());
-    cpr::Response fileData = cpr::Get(cpr::Url{fileUrl});
+//    fprintf(stdout, "json: %s\n", responseData.dump().c_str());
+//    fprintf(stdout, "file: %s\n", fileUrl.c_str());
+    if (fileUrl.empty())
+    {
+        session->close(404, "Package " + packageName + " could not be found.");
+        session->erase();
+        return;
+    }
+    string mangledFileUrl = Environment::Instance().MangleURL(fileUrl);
+    fprintf(stdout, "returning: %s\n", mangledFileUrl.c_str());
+    cpr::Response fileData = cpr::Get(cpr::Url{mangledFileUrl});
 
     const multimap< string, string > replyHeaders
     {
