@@ -11,6 +11,7 @@
         ],
         "ebbs_next" : [
           {
+            "clear_build_path" : false,
             "build" : "cpp",
             "build_in" : "build",
             "copy" : [
