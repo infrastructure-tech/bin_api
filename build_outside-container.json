@@ -19,6 +19,9 @@
         "ebbs_next" : [
           {
             "build": "docker",
+            "run_when" : [
+              "release"
+            ],
             "path" : "srv_infrastructure",
             "copy" : [
               {"out/" : "src/"}

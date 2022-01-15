@@ -19,5 +19,8 @@ jobs:
       run: |
         pip install ebbs
     - name: Build
+      env:
+        docker_username: ${{ secrets.DOCKER_USERNAME }}
+        docker_password: ${{ secrets.DOCKER_PASSWORD }}
       run: |
         ebbs -v . --repo-username "${{ secrets.INFRASTRUCTURE_USERNAME }}" --repo-password "${{ secrets.INFRASTRUCTURE_PASSWORD }}" --version "${{ github.event.release.tag_name }}" --event "release"
