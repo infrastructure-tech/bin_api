@@ -23,7 +23,7 @@ There are 2 main methods for handling packages: publish (POST) and download (GET
 Both queries take HTTP Basic Auth headers (i.e. username and password). While authentication is necessary for publishing, it is not required for downloading. However, if you wish to download private packages, you must authenticate. Additionally, public packages will be searched if no private package is found. So, you can supply your username and password with every request.
 Here's the methods:
 ```c++
-void publish_package(const shared_ptr< Session > session )
+void PublishPackage(const shared_ptr< Session > session )
 {
     ...
     //{(ignore this bit), "parameter name", {possible choices}, "default value"}
@@ -37,7 +37,7 @@ void publish_package(const shared_ptr< Session > session )
     };
     ...
 }
-void download_package(const shared_ptr< Session > session )
+void DownloadPackage(const shared_ptr< Session > session )
 {
     ...
 }
@@ -46,15 +46,15 @@ The associated URLs are:
 ```c++
     auto publish = make_shared<Resource>();
     publish->set_path("v1/package/publish" );
-    publish->set_method_handler("POST", publish_package );
+    publish->set_method_handler("POST", PublishPackage );
 
     auto download = make_shared<Resource>();
     download->set_path("v1/package/download" );
-    download->set_method_handler("GET", download_package );
+    download->set_method_handler("GET", DownloadPackage );
 ```
 
 
-When using `download_package`, you may specify `username` and `password` as you would for `publish_package`. Doing so will cause the api to search private packages before public ones. If no private nor public package is fround a 404 will be returned.
+When using `DownloadPackage`, you may specify `username` and `password` as you would for `PublishPackage`. Doing so will cause the api to search private packages before public ones. If no private nor public package is fround a 404 will be returned.
 
 ## Design
 

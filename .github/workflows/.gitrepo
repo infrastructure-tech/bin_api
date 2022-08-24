@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/eons-dev/part_ebbs-workflows.git
 	branch = main
-	commit = a1c9a5b08267ab0122fafdce77ea5e7e89854cdf
-	parent = ccdfe8649a0a48838189119b6a74c28e41dbd3c6
+	commit = 4f4ddc70495baa75bf85ffaa89055c5d052a0352
+	parent = 79f76a07710034a7820d882410874e096b73a399
 	method = merge
 	cmdver = 0.4.3

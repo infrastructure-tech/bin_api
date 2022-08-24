@@ -1,1 +1,1 @@
-build_inside-container.json
+{"file_name": "api_v1", "cpp_version": 17, "dep_lib": ["restbed", "cpr"], "name": "infrastructure", "type": "srv", "clear_build_path": false}

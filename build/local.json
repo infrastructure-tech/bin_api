@@ -1,0 +1,21 @@
+{
+  "name" : "infrastructure",
+  "type" : "srv",
+  "clear_build_path" : false,
+  "build_in" : "../",
+  "next": [
+    {
+      "clear_build_path" : true,
+      "build" : "cpp",
+      "build_in" : "local",
+      "config" : {
+        "file_name" : "api_v1",
+        "cpp_version" : 17,
+        "dep_lib": [
+          "restbed",
+          "cpr"
+        ]
+      }
+    }
+  ]
+}
