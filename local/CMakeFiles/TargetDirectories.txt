@@ -1,3 +1,0 @@
-/mnt/env/local/CMakeFiles/api_v1.dir
-/mnt/env/local/CMakeFiles/edit_cache.dir
-/mnt/env/local/CMakeFiles/rebuild_cache.dir
