@@ -29,12 +29,19 @@ void DownloadPackage(const shared_ptr< Session > session)
 	}
 
 	string packageName = request->get_query_parameter("package_name");
+	if (packageName.empty())
+	{
+		session->close(204, "You must specify the \"package_name\" that you would like to download.");
+	}
+
 	string public_url = Environment::Instance().GetUpstreamURL() + "/wp-json/wp/v2/package?slug=" + packageName;
 	string private_url = public_url + "&status=private";
+
 	cpr::Response upstreamResponse;
+
 	if (request->has_header("Authorization"))
 	{
-		upstreamResponse = cpr::Get(cpr::Url{private_url}, cpr::Authentication{auth.username, auth.password});
+		upstreamResponse = cpr::Get(cpr::Url{private_url}, cpr::Authentication(auth.username, auth.password, cpr::AuthMode::BASIC));
 		if (upstreamResponse.text == "[]")
 		{
 			upstreamResponse = cpr::Get(cpr::Url{public_url});
@@ -74,10 +81,11 @@ void DownloadPackage(const shared_ptr< Session > session)
 	cpr::Response fileData = cpr::Get(cpr::Url{mangledFileUrl});
 
 	const multimap< string, string > replyHeaders
-		{
-			{ "Content-Disposition", "attachment; filename=\""+packageName+".zip\"" },
-			{ "Content-Type", "application/force-download" }
-		};
+	{
+		{ "Content-Disposition", "attachment; filename=\""+packageName+".zip\"" },
+		{ "Content-Type", "application/force-download" },
+		{ "Content-Length", to_string(fileData.text.size()) }
+	};
 
 	session->close(OK, fileData.text, replyHeaders);
 	session->erase();

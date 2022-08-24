@@ -1,0 +1,1 @@
+/usr/bin/c++  -g CMakeFiles/api_v1.dir/mnt/env/src/main.cpp.o -o out/api_v1 -Wl,--start-group -Wl,--whole-archive  -lrestbed -lcpr  -Wl,--no-whole-archive -Wl,--end-group

@@ -91,7 +91,7 @@ void PublishPackage(const shared_ptr< Session > session)
 		cpr::Response upstreamResponse = cpr::Post(
 			cpr::Url(Environment::Instance().GetUpstreamURL() + "/wp-json/gf/v2/forms/1/submissions"),
 			cpr::Body(upstreamRequestBody.dump()),
-			cpr::Authentication{auth.username, auth.password},
+			cpr::Authentication(auth.username, auth.password, cpr::AuthMode::BASIC),
 			cpr::Header{{"Content-Type", "application/json"}});
 
 		//        multimap< string, string > replyHeaders;

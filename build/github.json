@@ -20,11 +20,11 @@
             "copy" : [
               {"../../../inc/" : "inc/"},
               {"../../../src/" : "src/"}
-            ],
+            ], 
             "config" : {
               "file_name" : "api_v1",
               "cpp_version" : 17,
-              "libs_shared": [
+              "dep_lib": [
                 "restbed",
                 "cpr"
               ],

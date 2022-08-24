@@ -1,0 +1,17 @@
+
+cmake_minimum_required (VERSION 3.12.0)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY /mnt/env/local/out)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY /mnt/env/local/out)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY /mnt/env/local/out)
+set(CMAKE_BUILD_TYPE Debug) 
+project(api_v1)
+include_directories(/mnt/env/inc)
+add_executable(api_v1 /mnt/env/src/main.cpp)
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+target_link_libraries(api_v1 Threads::Threads)
+target_link_libraries(api_v1 restbed cpr)
+set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_CXX_COMPILER>  <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> -Wl,--start-group -Wl,--whole-archive <LINK_LIBRARIES> -Wl,--no-whole-archive -Wl,--end-group")
