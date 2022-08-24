@@ -36,7 +36,7 @@
                   ],
                   "path" : "srv_infrastructure",
                   "copy" : [
-                    {"out/" : "src/"}
+                    {"out/" : "bin/"}
                   ],
                   "config" : {
                     "base_image" : "eons/img_webserver",
