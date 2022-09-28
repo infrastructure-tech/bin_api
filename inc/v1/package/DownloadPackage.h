@@ -67,7 +67,7 @@ void DownloadPackage(const shared_ptr< Session > session)
 		session->erase();
 		return;
 	}
-	string fileUrl = responseData[0]["file"].get<string>();
+	string fileUrl = responseData[0]["acf"]["file"].get<string>();
 	//    fprintf(stdout, "json: %s\n", responseData.dump().c_str());
 	//    fprintf(stdout, "file: %s\n", fileUrl.c_str());
 	if (fileUrl.empty())
